@@ -7,7 +7,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
       <div className="container mx-auto px-4 py-8">
         <header className="flex flex-col items-center mb-12">
-          <div className="w-32 h-32 relative mb-4">
+          <div className="w-48 h-48 relative mb-4">
             <Image src="/images/rulezilla-logo.png" alt="Rulezilla Logo" fill className="object-contain" priority />
           </div>
           <h1 className="text-4xl font-bold text-green-800">Rulezilla</h1>
