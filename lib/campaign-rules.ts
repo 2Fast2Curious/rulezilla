@@ -24,23 +24,23 @@ export type RuleGroup = {
   }
 }
 
-// Clear the cache when updating the URL
 let campaignRules: CampaignRule[] | null = null
 
 export async function fetchCampaignRules(): Promise<CampaignRule[]> {
-  // Always fetch fresh data to ensure we have the latest
-  campaignRules = null
+  if (campaignRules) {
+    return campaignRules
+  }
 
   try {
     const response = await fetch(
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/For%20Chat%202%20-%20Sheet1%20%286%29-VVLsv7PQq7nIYonIIF0cE81JbNmjFv.csv",
-      { cache: "no-store" }, // Ensure we don't use cached data
+      { cache: "no-store" } // Ensure we don't use cached data
     )
-
+    
     if (!response.ok) {
       throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`)
     }
-
+    
     const csvText = await response.text()
 
     const result = Papa.parse(csvText, {
@@ -77,11 +77,19 @@ function matchesFilter(ruleValue: string, selectedValue: string): boolean {
   if (ruleValue.toLowerCase() === "all") {
     return true
   }
-
+  
   // Handle "All excluding X" cases
   if (ruleValue.toLowerCase().includes("all excluding")) {
     const excluded = ruleValue.replace("All Excluding ", "").toLowerCase()
     return selectedValue.toLowerCase() !== excluded.toLowerCase()
+  }
+  
+  // Handle comma-separated values (multiple traffic sources)
+  if (ruleValue.includes(",")) {
+    // Split by comma and trim whitespace
+    const values = ruleValue.split(",").map((v) => v.trim().toLowerCase())
+    // Check if the selected value matches any of the values in the list
+    return values.includes(selectedValue.toLowerCase())
   }
 
   // Direct match
@@ -99,19 +107,20 @@ export async function findMatchingRuleGroups(
   }
 
   const rules = await fetchCampaignRules()
-
+  
   console.log(`Searching for matches with: ${vertical}, ${funnelType}, ${language}, ${trafficSource}`)
 
   const matchingRules = rules.filter((rule) => {
-    const matches =
+    const matches = (
       matchesFilter(rule.vertical, vertical) &&
       matchesFilter(rule.funnelType, funnelType) &&
       matchesFilter(rule.language, language) &&
       matchesFilter(rule.trafficSource, trafficSource)
-
+    )
+    
     return matches
   })
-
+  
   console.log(`Found ${matchingRules.length} matching rules`)
 
   return matchingRules.map((rule) => ({
