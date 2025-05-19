@@ -33,7 +33,7 @@ export async function fetchCampaignRules(): Promise<CampaignRule[]> {
 
   try {
     const response = await fetch(
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/For%20Chat%202%20-%20Sheet1%20%285%29-umw3yakVluf8krECc5851gC9tEvBMu.csv",
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/For%20Chat%202%20-%20Sheet1%20%286%29-VVLsv7PQq7nIYonIIF0cE81JbNmjFv.csv",
       { cache: "no-store" }, // Ensure we don't use cached data
     )
 
